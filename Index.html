@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alat Pembuat Prompt Konten Visual Gemini Veo 3</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a clean look */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light background */
+            color: #334155; /* Dark gray text */
+        }
+        /* Style for textareas */
+        textarea {
+            resize: vertical; /* Allow vertical resizing */
+            min-height: 80px; /* Minimum height for textareas */
+        }
+        /* Custom scrollbar for generated prompt area */
+        .prompt-output::-webkit-scrollbar {
+            width: 8px;
+        }
+        .prompt-output::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .prompt-output::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        .prompt-output::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        /* Styling for the scene sections */
+        .scene-section {
+            border: 1px solid #cbd5e1; /* slate-300 */
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 1.5rem; /* mb-6 */
+            background-color: #f8fafc; /* slate-50 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 sm:p-8 md:p-10 rounded-xl shadow-2xl w-full max-w-4xl border border-gray-200">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-green-700 mb-6 sm:mb-8">
+            Alat Pembuat Prompt Konten Visual Gemini Veo 3
+        </h1>
+        <p class="text-center text-gray-600 mb-8">
+            Isi formulir di bawah ini untuk menghasilkan prompt video yang berfokus pada aspek visual untuk cerita, sinematik, atau konten menarik lainnya.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Global Fields -->
+            <div class="col-span-2">
+                <label for="projectTitle" class="block text-lg font-semibold text-gray-700 mb-2">1. Judul Prompt / Nama Proyek</label>
+                <input type="text" id="projectTitle" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Petualangan Penjelajah Waktu, Misteri Hutan Terlarang">
+            </div>
+
+            <div class="col-span-2">
+                <label for="genreStyle" class="block text-lg font-semibold text-gray-700 mb-2">2. Genre / Gaya Visual Utama</label>
+                <input type="text" id="genreStyle" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Fantasi Epik, Sci-Fi Minimalis, Drama Realistis, Horor Gotik, Komedi Ceria">
+            </div>
+
+            <div class="col-span-2">
+                <label for="visualConceptSummary" class="block text-lg font-semibold text-gray-700 mb-2">3. Ringkasan Konsep Visual / Ide Utama</label>
+                <textarea id="visualConceptSummary" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Sebuah perjalanan visual melalui lanskap kota futuristik yang dipenuhi neon dan bayangan, menyoroti isolasi individu."></textarea>
+            </div>
+
+            <div class="col-span-2">
+                <label for="targetViewerMood" class="block text-lg font-semibold text-gray-700 mb-2">4. Target Pemirsa & Nuansa yang Ingin Dirasakan</label>
+                <textarea id="targetViewerMood" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Pemirsa yang menyukai sinematografi artistik dan cerita tanpa dialog. Nuansa: Melankolis, penuh harapan, tegang, menakjubkan."></textarea>
+            </div>
+
+            <div class="col-span-2">
+                <label for="overallVisualTheme" class="block text-lg font-semibold text-gray-700 mb-2">5. Tema Visual Keseluruhan / Estetika Utama</label>
+                <textarea id="overallVisualTheme" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Estetika cyberpunk gelap dengan sentuhan neon yang kontras. Fokus pada detail arsitektur dan pencahayaan dramatis."></textarea>
+            </div>
+
+            <div class="col-span-2">
+                <label for="generalInstructions" class="block text-lg font-semibold text-gray-700 mb-2">6. Instruksi Umum Video (Termasuk Hindari Teks/Subtitle, Durasi Total Estimasi)</label>
+                <textarea id="generalInstructions" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Pastikan tidak ada teks atau subtitle yang muncul di video. Video harus sepenuhnya visual dan didorong oleh musik. Estimasi durasi total video: 1-2 menit."></textarea>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Detail Adegan</h2>
+        <div id="scenesContainer">
+            <!-- Scene templates will be added here by JavaScript -->
+        </div>
+
+        <div class="flex justify-center mb-8">
+            <button id="addSceneBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 mr-4">
+                + Tambah Adegan
+            </button>
+            <button id="generatePromptBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                Hasilkan Prompt Visual
+            </button>
+        </div>
+
+        <!-- Output Area -->
+        <div id="outputContainer" class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-inner hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Prompt Visual yang Dihasilkan:</h2>
+            <pre id="generatedPrompt" class="prompt-output whitespace-pre-wrap break-words p-4 bg-gray-100 rounded-lg border border-gray-300 text-gray-800 text-sm overflow-y-auto max-h-96"></pre>
+            <div class="flex justify-center mt-4">
+                <button id="copyToClipboardBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-5 rounded-full shadow transition duration-300 ease-in-out transform hover:scale-105">
+                    Salin ke Clipboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Message Box for alerts -->
+        <div id="messageBox" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                <p id="messageText" class="text-lg font-semibold mb-4"></p>
+                <button id="closeMessageBoxBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md">
+                    Oke
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get references to DOM elements
+        const projectTitle = document.getElementById('projectTitle');
+        const genreStyle = document.getElementById('genreStyle');
+        const visualConceptSummary = document.getElementById('visualConceptSummary');
+        const targetViewerMood = document.getElementById('targetViewerMood');
+        const overallVisualTheme = document.getElementById('overallVisualTheme');
+        const generalInstructions = document.getElementById('generalInstructions');
+        const scenesContainer = document.getElementById('scenesContainer');
+        const addSceneBtn = document.getElementById('addSceneBtn');
+        const generatePromptBtn = document.getElementById('generatePromptBtn');
+        const generatedPrompt = document.getElementById('generatedPrompt');
+        const outputContainer = document.getElementById('outputContainer');
+        const copyToClipboardBtn = document.getElementById('copyToClipboardBtn');
+
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const closeMessageBoxBtn = document.getElementById('closeMessageBoxBtn');
+
+        let sceneCount = 0;
+
+        // Function to show custom message box
+        function showMessageBox(message) {
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden');
+        }
+
+        // Event listener for closing the message box
+        closeMessageBoxBtn.addEventListener('click', () => {
+            messageBox.classList.add('hidden');
+        });
+
+        // Function to add a new scene block
+        function addScene() {
+            sceneCount++;
+            const sceneDiv = document.createElement('div');
+            sceneDiv.classList.add('scene-section', 'mb-6');
+            sceneDiv.setAttribute('data-scene-id', sceneCount);
+
+            sceneDiv.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">Adegan ${sceneCount}</h3>
+                    <button type="button" class="remove-scene-btn bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-full text-sm transition duration-300 ease-in-out">Hapus Adegan</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label for="sceneTitle${sceneCount}" class="block text-md font-semibold text-gray-700 mb-1">Judul Adegan (Opsional)</label>
+                        <input type="text" id="sceneTitle${sceneCount}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Pertemuan di Hutan Ajaib">
+                    </div>
+
+                    <div class="col-span-2">
+                        <label for="sceneDuration${sceneCount}" class="block text-md font-semibold text-gray-700 mb-1">Durasi Adegan (Detik)</label>
+                        <input type="number" id="sceneDuration${sceneCount}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: 10">
+                    </div>
+
+                    <div class="col-span-2 mt-4">
+                        <label for="characterVisual${sceneCount}" class="block text-md font-semibold text-gray-700 mb-1">Deskripsi Visual Karakter (detail wajah, ekspresi, pakaian, etnis, usia, dll)</label>
+                        <textarea id="characterVisual${sceneCount}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Seorang wanita muda (28 tahun), rambut sebahu berwarna cokelat terang, mengenakan sweater rajut krem, tersenyum santai. Atau: Seorang wanita (30 tahun), pakaian sopan, berhijab modern, ekspresi ramah, sedang memegang sebuah buku kuno."></textarea>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label for="locationDesc${sceneCount}" class="block text-md font-semibold text-gray-700 mb-1">Deskripsi Lokasi atau Latar (detail suasana, waktu, warna dominan, kondisi lingkungan)</label>
+                        <textarea id="locationDesc${sceneCount}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Hutan pinus yang lebat dan berkabut di pagi hari. Cahaya matahari menembus celah-celah pohon, menciptakan sorotan dramatis. Warna dominan hijau tua dan abu-abu. Suasana sunyi dan misterius."></textarea>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label for="actionDesc${sceneCount}" class="block text-md font-semibold text-gray-700 mb-1">Deskripsi Aksi di Adegan (gerakan karakter, interaksi, momen penting)</label>
+                        <textarea id="actionDesc${sceneCount}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Karakter utama berjalan perlahan melewati semak-semak, tangannya memegang kompas kuno. Ia berhenti sejenak, menoleh ke belakang seolah merasa diawasi, lalu melanjutkan perjalanannya dengan langkah lebih cepat."></textarea>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label for="visualStyle${sceneCount}" class="block text-md font-semibold text-gray-700 mb-1">Jenis Gaya Visual & Sinematografi (tone warna, pencahayaan, gaya kamera, estetika)</label>
+                        <textarea id="visualStyle${sceneCount}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Tone warna hangat dan keemasan. Pencahayaan natural dengan efek 'god rays' yang menembus dedaunan. Gaya sinematografi epik dan sinematik, seperti film petualangan klasik."></textarea>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label for="cameraShot${sceneCount}" class="block text-md font-semibold text-gray-700 mb-1">Jenis Shot & Gerakan Kamera (Spesifik)</label>
+                        <textarea id="cameraShot${sceneCount}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Dimulai dengan close-up pada kompas yang bergetar. Kemudian dolly out perlahan menjadi medium shot karakter yang berjalan. Diikuti dengan tracking shot dari belakang saat ia memasuki area yang lebih gelap. Akhiri dengan slow-motion saat ia melompat melewati batang pohon tumbang."></textarea>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label for="audioDesign${sceneCount}" class="block text-md font-semibold text-gray-700 mb-1">Desain Audio Adegan (Musik, SFX, Ambience)</label>
+                        <textarea id="audioDesign${sceneCount}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Musik latar orkestra yang megah dan sedikit melankolis. Sound effect langkah kaki di dedaunan kering, suara burung hantu samar di kejauhan, dan desiran angin. Ambience hutan yang sunyi."></textarea>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label for="sceneNotes${sceneCount}" class="block text-md font-semibold text-gray-700 mb-1">Catatan atau Elemen Khusus Adegan</label>
+                        <textarea id="sceneNotes${sceneCount}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Pastikan ada efek kabut tebal di latar belakang. Gunakan transisi 'dissolve' yang lembut antar adegan."></textarea>
+                    </div>
+                </div>
+            `;
+            scenesContainer.appendChild(sceneDiv);
+
+            // Add event listener for the remove button
+            sceneDiv.querySelector('.remove-scene-btn').addEventListener('click', () => {
+                sceneDiv.remove();
+                updateSceneNumbers();
+            });
+        }
+
+        // Function to update scene numbers after removal
+        function updateSceneNumbers() {
+            const sceneDivs = scenesContainer.querySelectorAll('.scene-section');
+            sceneCount = 0; // Reset count
+            sceneDivs.forEach((div, index) => {
+                sceneCount = index + 1;
+                div.setAttribute('data-scene-id', sceneCount);
+                div.querySelector('h3').textContent = `Adegan ${sceneCount}`;
+                // Update IDs of inner elements to match new scene number (important for retrieval)
+                div.querySelectorAll('[id]').forEach(el => {
+                    const oldId = el.id;
+                    const newId = oldId.replace(/\d+$/, sceneCount); // Replace last number with new count
+                    el.id = newId;
+                    if (el.tagName === 'LABEL') {
+                        el.setAttribute('for', newId);
+                    }
+                });
+            });
+        }
+
+
+        // Add initial scene when the page loads
+        document.addEventListener('DOMContentLoaded', addScene);
+
+        // Event listener for adding a new scene
+        addSceneBtn.addEventListener('click', addScene);
+
+        // Event listener for generating the prompt
+        generatePromptBtn.addEventListener('click', () => {
+            let scenesPrompt = '';
+            const sceneDivs = scenesContainer.querySelectorAll('.scene-section');
+
+            if (sceneDivs.length === 0) {
+                showMessageBox('Mohon tambahkan setidaknya satu adegan untuk menghasilkan prompt.');
+                return;
+            }
+
+            sceneDivs.forEach((sceneDiv, index) => {
+                const sceneId = sceneDiv.getAttribute('data-scene-id');
+                const sceneTitle = document.getElementById(`sceneTitle${sceneId}`).value.trim();
+                const sceneDuration = document.getElementById(`sceneDuration${sceneId}`).value.trim();
+                const characterVisual = document.getElementById(`characterVisual${sceneId}`).value.trim();
+                const locationDesc = document.getElementById(`locationDesc${sceneId}`).value.trim();
+                const actionDesc = document.getElementById(`actionDesc${sceneId}`).value.trim();
+                const visualStyle = document.getElementById(`visualStyle${sceneId}`).value.trim();
+                const cameraShot = document.getElementById(`cameraShot${sceneId}`).value.trim();
+                const audioDesign = document.getElementById(`audioDesign${sceneId}`).value.trim();
+                const sceneNotes = document.getElementById(`sceneNotes${sceneId}`).value.trim();
+
+                scenesPrompt += `
+**Adegan ${index + 1}${sceneTitle ? ': ' + sceneTitle : ''}:**
+* **Durasi Adegan:** \`${sceneDuration || '[Isi durasi dalam detik]'}\` detik
+* **Deskripsi Visual Karakter:** \`${characterVisual || '[Jelaskan detail karakter (wajah, ekspresi, pakaian, dll). Contoh: Seorang wanita (30 tahun), pakaian sopan, berhijab modern, ekspresi ramah.]'}\`
+* **Deskripsi Lokasi atau Latar:** \`${locationDesc || '[Jelaskan detail lokasi dan suasana (waktu, warna, kondisi lingkungan)]'}\`
+* **Deskripsi Aksi di Adegan:** \`${actionDesc || '[Jelaskan gerakan karakter, interaksi, momen penting]'}\`
+* **Jenis Gaya Visual & Sinematografi:** \`${visualStyle || '[Tentukan tone warna, pencahayaan, dan gaya sinematografi (realistis, fantasi, noir, futuristik)]'}\`
+* **Jenis Shot & Gerakan Kamera:** \`${cameraShot || '[Spesifikasikan jenis shot dan gerakan kamera (dolly, tracking, slow-mo, dsb)]'}\`
+* **Desain Audio Adegan:** \`${audioDesign || '[Jelaskan musik latar, sound effect, dan ambience spesifik adegan]'}\`
+* **Catatan atau Elemen Khusus Adegan:** \`${sceneNotes || '[Tambahkan instruksi khusus untuk adegan ini]'}\`
+                `.trim() + '\n\n';
+            });
+
+            const finalPrompt = `
+### **TEMPLATE PROMPT VIDEO KONTEN VISUAL GEMINI VEO 3**
+
+**1. Judul Prompt / Nama Proyek:**
+\`${projectTitle.value.trim() || '[Isi Judul Prompt / Nama Proyek]'}\`
+
+**2. Genre / Gaya Visual Utama:**
+\`${genreStyle.value.trim() || '[Isi Genre / Gaya Visual Utama (Contoh: Fantasi Epik, Sci-Fi Minimalis)]'}\`
+
+**3. Ringkasan Konsep Visual / Ide Utama:**
+\`${visualConceptSummary.value.trim() || '[Isi Ringkasan Konsep Visual / Ide Utama]'}\`
+
+**4. Target Pemirsa & Nuansa yang Ingin Dirasakan:**
+\`${targetViewerMood.value.trim() || '[Isi Target Pemirsa & Nuansa yang Ingin Dirasakan]'}\`
+
+**5. Tema Visual Keseluruhan / Estetika Utama:**
+\`${overallVisualTheme.value.trim() || '[Isi Tema Visual Keseluruhan / Estetika Utama]'}\`
+
+**6. Instruksi Umum Video:**
+\`${generalInstructions.value.trim() || '[Isi Instruksi Umum Video (Contoh: "Pastikan tidak ada teks atau subtitle yang muncul di video.")]'}\`
+
+---
+
+**DETAIL ADEGAN:**
+
+${scenesPrompt.trim()}
+
+---
+
+**7. Catatan Umum Tambahan:**
+\`${document.getElementById('finalNotes') ? document.getElementById('finalNotes').value.trim() : '[Tambahkan catatan umum tambahan untuk keseluruhan video]'}\`
+            `.trim();
+
+            generatedPrompt.textContent = finalPrompt;
+            outputContainer.classList.remove('hidden'); // Show the output container
+        });
+
+        // Add a global Final Notes field at the very end
+        const globalFinalNotes = document.createElement('div');
+        globalFinalNotes.classList.add('grid', 'grid-cols-1', 'gap-6', 'mb-8', 'mt-8');
+        globalFinalNotes.innerHTML = `
+            <div class="col-span-2">
+                <label for="finalNotes" class="block text-lg font-semibold text-gray-700 mb-2">7. Catatan Umum Tambahan (untuk keseluruhan video)</label>
+                <textarea id="finalNotes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 shadow-sm" placeholder="Contoh: Pastikan transisi antar adegan mulus. Total durasi video tidak lebih dari 3 menit."></textarea>
+            </div>
+        `;
+        scenesContainer.parentNode.insertBefore(globalFinalNotes, addSceneBtn.parentNode);
+
+
+        // Event listener for copying to clipboard
+        copyToClipboardBtn.addEventListener('click', () => {
+            const textToCopy = generatedPrompt.textContent;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = textToCopy;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            try {
+                document.execCommand('copy');
+                showMessageBox('Prompt berhasil disalin ke clipboard!');
+            } catch (err) {
+                showMessageBox('Gagal menyalin prompt. Silakan salin secara manual.');
+                console.error('Failed to copy text:', err);
+            } finally {
+                document.body.removeChild(tempTextArea);
+            }
+        });
+    </script>
+</body>
+</html>
